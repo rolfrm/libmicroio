@@ -51,3 +51,4 @@ void io_write_i64_leb(io_writer * wd, int64_t value);
 void io_write_f64(io_writer * wd, double value);
 void io_write_f32(io_writer * wd, float value);
 
+size_t io_getloc(binary_io * io);

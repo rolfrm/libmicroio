@@ -151,19 +151,11 @@ i32 io_read_i32_leb(io_reader * rd){
   return (i32)io_read_i64_leb(rd);
 }
 
-size_t reader_getloc(io_reader * rd){
+size_t io_getloc(io_reader * rd){
   assert(rd->f == NULL);
   return rd->offset;
 }
   
-char * io_readname(io_reader * rd){
-  u32 len = io_read_u32_leb(rd);
-  char * buffer = malloc(len + 1);
-  io_read(rd, buffer, len);
-  buffer[len] = 0;
-  return buffer;
-}
-
 char * io_read_str(binary_io * io){
   char * buf = NULL;
   char c = 0;
