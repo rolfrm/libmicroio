@@ -1,4 +1,6 @@
-
+// requires headers:
+// #include <stdint.h>
+// 
 // binary reader / writer
 typedef struct{
   void * data;
@@ -46,3 +48,6 @@ void io_write_i32(io_writer * wd, int32_t value);
 void io_write_str(io_writer * wd, const char * str);
 void io_write_u64_leb(io_writer * wd, uint64_t value);
 void io_write_i64_leb(io_writer * wd, int64_t value);
+void io_write_f64(io_writer * wd, double value);
+void io_write_f32(io_writer * wd, float value);
+

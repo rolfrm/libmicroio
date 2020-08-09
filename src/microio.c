@@ -195,6 +195,10 @@ void io_write_u32(io_writer * wd, u32 value){ io_write(wd, &value, sizeof(value)
 void io_write_u64(io_writer * wd, u64 value){ io_write(wd, &value, sizeof(value));}
 void io_write_i32(io_writer * wd, i32 value){ io_write(wd, &value, sizeof(value));}
 void io_write_i64(io_writer * wd, i64 value){ io_write(wd, &value, sizeof(value));}
+void io_write_f32(io_writer * wd, f32 value){ io_write(wd, &value, sizeof(value));}
+void io_write_f64(io_writer * wd, f64 value){ io_write(wd, &value, sizeof(value));}
+
+
 
 void io_write_str(binary_io * io, const char * str){
   int len = strlen(str);
