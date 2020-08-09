@@ -18,4 +18,4 @@ jobs:
     - name: make test
       run: make -f makefile.test
     - name: test 
-      run: LD_PRELOAD=./libmicroio.so ./run-test
+      run: LD_LIBRARY_PATH=. ./run-test
