@@ -227,3 +227,8 @@ void io_write_i64_leb(io_writer * wd, i64 value){
   }
 }
 
+
+void io_reset(binary_io * io){
+  assert(io->f == NULL);
+  io->offset = 0;
+}

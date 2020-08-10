@@ -5,6 +5,7 @@
 typedef struct{
   void * data;
   union{
+    // don't set offset directly!! use io_advance/io_rewind/io_reset instead.
     size_t offset;
     void * user_data;
   };
@@ -20,6 +21,7 @@ typedef binary_io io_reader;
 
 void io_advance(io_reader * rd, size_t bytes);
 void io_rewind(io_reader * rd, size_t bytes);
+void io_reset(binary_io * io);
 uint8_t io_read_u8(io_reader * rd);
 uint8_t io_peek_u8(io_reader * rd);
 void io_read(io_reader * rd, void * buffer, size_t len);
