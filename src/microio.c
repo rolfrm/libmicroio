@@ -7,6 +7,8 @@
 #include <microio.h>
 
 typedef int8_t i8;
+
+typedef int16_t i16;
 typedef int32_t i32;
 typedef int64_t i64;
 
@@ -37,16 +39,9 @@ void io_rewind(io_reader * rd, size_t bytes){
   rd->offset -= bytes;
 }
 
-
-u8 io_read_u8(io_reader * rd){
-  if(rd->f){
-    u8 r;
-    rd->f(&r, 1, rd->user_data);
-    return r;
-  }
-  u8 b = ((u8 *)(rd->data + rd->offset))[0];
-  io_advance(rd, 1);
-  return b;
+void io_reset(binary_io * io){
+  assert(io->f == NULL);
+  io->offset = 0;
 }
 
 u8 io_peek_u8(io_reader * rd){
@@ -83,16 +78,30 @@ u64 io_read_u64_leb(io_reader * rd){
   return value;
 }
 
-
-u32 io_read_u32_leb(io_reader * rd){
-  return io_read_u64_leb(rd);
+u8 io_read_u8(io_reader * rd){
+  if(rd->f){
+    u8 r;
+    rd->f(&r, 1, rd->user_data);
+    return r;
+  }
+  u8 b = ((u8 *)(rd->data + rd->offset))[0];
+  io_advance(rd, 1);
+  return b;
 }
+
 
 u64 io_read_u64(io_reader * rd){
   u64 value;
   io_read(rd, &value, sizeof(value));
   return value;
 }
+
+i16 io_read_i16(io_reader * rd){
+  i16 value;
+  io_read(rd, &value, sizeof(value));
+  return value;
+}
+
 
 i32 io_read_i32(io_reader * rd){
   i32 value;
@@ -118,11 +127,9 @@ u16 io_read_u16(io_reader * rd){
   return value;
 }
 
-
 f32 io_read_f32(io_reader * rd){
   f32 v = 0;
-  memcpy(&v, rd->data + rd->offset, sizeof(v));
-  io_advance(rd, sizeof(v));
+  io_read(rd, &v, sizeof(v));
   return v;
 }
 
@@ -149,6 +156,10 @@ i64 io_read_i64_leb(io_reader * rd) {
 
 i32 io_read_i32_leb(io_reader * rd){
   return (i32)io_read_i64_leb(rd);
+}
+
+u32 io_read_u32_leb(io_reader * rd){
+  return io_read_u64_leb(rd);
 }
 
 size_t io_getloc(io_reader * rd){
@@ -182,15 +193,17 @@ void io_write(io_writer * writer, const void * data, size_t count){
   memcpy(writer->data + writer->offset, data, count);
   writer->offset += count;
 }
+
 void io_write_u8(io_writer * wd, u8 value){ io_write(wd, &value, sizeof(value));} 
+void io_write_u16(io_writer * wd, u16 value){ io_write(wd, &value, sizeof(value));}
 void io_write_u32(io_writer * wd, u32 value){ io_write(wd, &value, sizeof(value));}
 void io_write_u64(io_writer * wd, u64 value){ io_write(wd, &value, sizeof(value));}
+void io_write_i8(io_writer * wd, i8 value){ io_write(wd, &value, sizeof(value));}
+void io_write_i16(io_writer * wd, i16 value){ io_write(wd, &value, sizeof(value));}
 void io_write_i32(io_writer * wd, i32 value){ io_write(wd, &value, sizeof(value));}
 void io_write_i64(io_writer * wd, i64 value){ io_write(wd, &value, sizeof(value));}
 void io_write_f32(io_writer * wd, f32 value){ io_write(wd, &value, sizeof(value));}
 void io_write_f64(io_writer * wd, f64 value){ io_write(wd, &value, sizeof(value));}
-
-
 
 void io_write_str(binary_io * io, const char * str){
   int len = strlen(str);
@@ -228,7 +241,5 @@ void io_write_i64_leb(io_writer * wd, i64 value){
 }
 
 
-void io_reset(binary_io * io){
-  assert(io->f == NULL);
-  io->offset = 0;
-}
+void io_write_i32_leb(io_writer * wd, i32 value) { io_write_i64_leb(wd, value); }
+void io_write_u32_leb(io_writer * wd, u32 value) { io_write_u64_leb(wd, value); }

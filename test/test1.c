@@ -9,6 +9,7 @@
 
 
 typedef int8_t i8;
+typedef int16_t i16;
 typedef int32_t i32;
 typedef int64_t i64;
 
@@ -49,11 +50,16 @@ int main(int argc, char ** argv){
     i64 e2 = -32196491321;
     const char * e3 =  "Hello World";
     double e4 = 1.53213;
+    float e5 = 1.0f / 3.0f;
+    u64 e6 = 0xFF0012321111FABCL;
+    i16 e7 = -3127;
     io_write_u8(io, e1);
     io_write_i64_leb(io, e2);
     io_write_str(io, "Hello World");
     io_write_f64(io, e4);
-
+    io_write_f32(io, e5);
+    io_write_u64_leb(io, e6);
+    io_write_i16(io, e7);
     if(i == 1){
       fclose(io->user_data);
       io->user_data = fopen("./test.bin", "r");
@@ -63,18 +69,24 @@ int main(int argc, char ** argv){
       io_reset(io);
     }
  
-    u8 a = io_read_u8(io);
-    i64 b = io_read_i64_leb(io);
-    char * c = io_read_str(io);
-    double d = io_read_f64(io);
+    u8 r1 = io_read_u8(io);
+    assert(r1 == e1);
+    i64 r2 = io_read_i64_leb(io);
+    assert(r2 == e2);
+    char * r3 = io_read_str(io);
+    assert(strcmp(e3, r3) == 0);
+    double r4 = io_read_f64(io);
+    assert(r4 == e4);
+    float r5 = io_read_f32(io);
+    assert(r5 == e5);
+    u64 r6 = io_read_u64_leb(io);
+    assert(r6 == e6);
+    i16 r7 = io_read_i16(io);
+    assert(r7 == e7);
     if(i == 1){
       fclose(io->user_data);
       remove("test.bin");
     }
-    assert(a == e1);
-    assert(b == e2);
-    assert(strcmp(e3, c) == 0);
-    assert(d == e4);
   }
   
   printf("tests passed!\n");
