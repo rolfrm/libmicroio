@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <assert.h>
 #include <microio.h>
@@ -167,7 +168,7 @@ size_t io_getloc(io_reader * rd){
   return rd->offset;
 }
   
-char * io_read_str(binary_io * io){
+char * io_read_str0(binary_io * io){
   char * buf = NULL;
   char c = 0;
   size_t s = 0;
@@ -179,6 +180,13 @@ char * io_read_str(binary_io * io){
   return buf;
 }
 
+char * io_read_strn(binary_io * io, u32 * out_len){
+  u32 cnt = io_read_u32_leb(io);
+  char * buf = malloc(cnt);
+  io_read(io, buf, cnt);
+  *out_len = cnt;
+  return buf;
+}
 
 void io_write(io_writer * writer, const void * data, size_t count){
   if(writer->f){
@@ -205,9 +213,39 @@ void io_write_i64(io_writer * wd, i64 value){ io_write(wd, &value, sizeof(value)
 void io_write_f32(io_writer * wd, f32 value){ io_write(wd, &value, sizeof(value));}
 void io_write_f64(io_writer * wd, f64 value){ io_write(wd, &value, sizeof(value));}
 
-void io_write_str(binary_io * io, const char * str){
+void io_write_str0(binary_io * io, const char * str){
   int len = strlen(str);
   io_write(io, str, len + 1);
+}
+
+void io_write_str(binary_io * io, const char * str){
+  int len = strlen(str);
+  io_write(io, str, len);
+}
+
+void io_write_strn(binary_io * io, const char * str){
+  int len = strlen(str);
+  io_write_u32_leb(io, (u32)len);
+  io_write(io, str, len);
+}
+
+void io_write_f(io_writer * wd, const char * format, ...){
+  char write_buf[128];
+  va_list args;
+  va_start (args, format);
+  size_t nbytes = vsnprintf(write_buf, sizeof(write_buf), format, args);
+  va_end (args);
+  if(nbytes < sizeof(write_buf)){
+    io_write(wd, write_buf, nbytes);
+    return;
+  }
+  
+  va_start (args, format);
+  char * ptr = NULL;
+  int cnt = vasprintf(&ptr, format, args);
+  io_write(wd, ptr, cnt);
+  free(ptr);
+  va_end (args);  
 }
 
 void io_write_u64_leb(io_writer * wd, u64 value){

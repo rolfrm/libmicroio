@@ -44,7 +44,10 @@ float io_read_f32(io_reader * rd);
 double io_read_f64(io_reader * rd);
 // caller deallocates the returned string.
 // it expects a 0-terminated string.
-char * io_read_str(binary_io * io);
+char * io_read_str0(binary_io * io);
+// caller deallocates the returned string.
+// reads a unsigned LEB128 number and reads the following number of bytes.
+char * io_read_strn(binary_io * io, uint32_t * out_len);
 
 // write
 void io_write(io_writer * writer, const void * data, size_t count);
@@ -63,4 +66,14 @@ void io_write_i64(io_writer * wd, int64_t value);
 void io_write_f64(io_writer * wd, double value);
 void io_write_f32(io_writer * wd, float value);
 // writes the string in zero-terminated format.
-void io_write_str(io_writer * wd, const char * str);
+void io_write_str0(io_writer * wd, const char * str);
+// writes the length of the string in unsigned LEB128 format and prepends the string itself.
+void io_write_strn(binary_io * io, const char * str);
+// writes a string to the buffer.
+void io_write_str(binary_io * io, const char * str);
+  
+
+// writes a string to the writer.
+//void io_write_str(io_writer * wd, const char * str);
+// writes a formatted string. Note, this does 
+void io_write_f(io_writer * wd, const char * format, ...); 

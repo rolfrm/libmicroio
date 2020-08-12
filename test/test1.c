@@ -55,7 +55,8 @@ int main(int argc, char ** argv){
     i16 e7 = -3127;
     io_write_u8(io, e1);
     io_write_i64_leb(io, e2);
-    io_write_str(io, "Hello World");
+    io_write_str0(io, "Hello World");
+    io_write_strn(io, "Hello World");
     io_write_f64(io, e4);
     io_write_f32(io, e5);
     io_write_u64_leb(io, e6);
@@ -73,8 +74,13 @@ int main(int argc, char ** argv){
     assert(r1 == e1);
     i64 r2 = io_read_i64_leb(io);
     assert(r2 == e2);
-    char * r3 = io_read_str(io);
+    char * r3 = io_read_str0(io);
     assert(strcmp(e3, r3) == 0);
+    u32 r3_len;
+    char * r3_2 = io_read_strn(io, &r3_len);
+    assert(r3_len == strlen(r3));
+    assert(strncmp(e3, r3_2, r3_len) == 0);
+    
     double r4 = io_read_f64(io);
     assert(r4 == e4);
     float r5 = io_read_f32(io);
