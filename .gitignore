@@ -3,6 +3,7 @@
 
 # Object files
 *.o
+*.o.depends
 *.ko
 *.obj
 *.elf
