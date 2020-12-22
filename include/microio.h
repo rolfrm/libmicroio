@@ -16,14 +16,17 @@ typedef struct{
   void (* f)(void * data, size_t count, void * user_data);
 }binary_io;
 
+typedef binary_io io_base;
 typedef binary_io io_writer;
 typedef binary_io io_reader;
 
-void io_advance(io_reader * rd, size_t bytes);
-void io_rewind(io_reader * rd, size_t bytes);
-void io_reset(binary_io * io);
+void io_advance(io_base * rd, size_t bytes);
+void io_rewind(io_base * rd, size_t bytes);
+void io_reset(io_base * io);
 uint8_t io_read_u8(io_reader * rd);
+// [obsolete] use io_offset instead.
 size_t io_getloc(binary_io * io);
+size_t io_offset(io_base * io);
 
 uint8_t io_peek_u8(io_reader * rd);
 void io_read(io_reader * rd, void * buffer, size_t len);

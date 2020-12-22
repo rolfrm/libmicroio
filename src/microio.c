@@ -163,6 +163,11 @@ u32 io_read_u32_leb(io_reader * rd){
   return io_read_u64_leb(rd);
 }
 
+size_t io_offset(io_base * io){
+  assert(io->f == NULL);
+  return io->offset; 
+}
+
 size_t io_getloc(io_reader * rd){
   assert(rd->f == NULL);
   return rd->offset;
