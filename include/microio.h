@@ -29,6 +29,7 @@ size_t io_getloc(binary_io * io);
 size_t io_offset(io_base * io);
 
 uint8_t io_peek_u8(io_reader * rd);
+uint64_t io_peek_u64(io_reader * rd);
 void io_read(io_reader * rd, void * buffer, size_t len);
 
 uint64_t io_read_u64_leb(io_reader * rd);
@@ -71,12 +72,13 @@ void io_write_f32(io_writer * wd, float value);
 // writes the string in zero-terminated format.
 void io_write_str0(io_writer * wd, const char * str);
 // writes the length of the string in unsigned LEB128 format and prepends the string itself.
-void io_write_strn(binary_io * io, const char * str);
+void io_write_strn(io_writer * io, const char * str);
 // writes a string to the buffer.
-void io_write_str(binary_io * io, const char * str);
+void io_write_str(io_writer * io, const char * str);
   
 
 // writes a string to the writer.
 //void io_write_str(io_writer * wd, const char * str);
 // writes a formatted string. Note, this does 
-void io_write_f(io_writer * wd, const char * format, ...); 
+void io_write_fmt(io_writer * io, const char * fmt, ...);
+void io_writer_clear(io_writer * wd);

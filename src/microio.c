@@ -45,14 +45,39 @@ void io_reset(binary_io * io){
   io->offset = 0;
 }
 
+void io_writer_clear(io_writer * wd){
+  if(wd->f){
+    perror("clear not supported by this writer\n");
+    return;
+  }
+  free(wd->data);
+  *wd = (io_writer){0};
+
+}
+
 u8 io_peek_u8(io_reader * rd){
   if(rd->f){
     perror("Rewind not supported by reader\n");
     return 0;
   }
+  u8 result = 0;
+  if(rd->offset + sizeof(result) < rd->size){
+    result = ((u8 *)rd->data + rd->offset)[0];
+  }
+  return result;
+}
 
-  u8 b = ((u8 *)(rd->data + rd->offset))[0];
-  return b;
+u64 io_peek_u64(io_reader * rd){
+  if(rd->f){
+    perror("Rewind not supported by reader\n");
+    return 0;
+  }
+  u64 result = 0;
+  if(rd->offset + sizeof(result) < rd->size){
+    result = ((u64 *)rd->data + rd->offset)[0];
+  }
+  
+  return result;
 }
 
 void io_read(io_reader * rd, void * buffer, size_t len){
@@ -234,7 +259,7 @@ void io_write_strn(binary_io * io, const char * str){
   io_write(io, str, len);
 }
 
-void io_write_f(io_writer * wd, const char * format, ...){
+void io_write_fmt(io_writer * wd, const char * format, ...){
   char write_buf[128];
   va_list args;
   va_start (args, format);
