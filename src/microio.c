@@ -36,7 +36,7 @@ void io_rewind(io_reader * rd, size_t bytes){
     perror("Rewind not supported by reader\n");
     return;
   }
-  assert(((int)rd->offset - bytes) >= 0);
+  assert(((i64)(rd->offset - bytes)) >= 0);
   rd->offset -= bytes;
 }
 
