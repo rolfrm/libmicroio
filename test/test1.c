@@ -32,6 +32,20 @@ static void write_some(void * data, u64 count, void * ptr){
   fwrite(data, count, 1, f);
 }
 
+void test_stack_mode(){
+  binary_io _io = {0};
+  _io.mode = IO_MODE_STACK;
+  binary_io * io = &_io;
+  io_write_f32(io, 1.0f);
+  io_write_f32(io, 5.0f);
+  io_write_i32(io, 123123123);
+  io_write_u8(io, 5);
+  assert(io_read_u8(io) == 5);
+  assert(io_read_i32(io) == 123123123);
+  assert(io_read_f32(io) == 5.0f);
+  assert(io_read_f32(io) == 1.0f);  
+}
+
 
 int main(int argc, char ** argv){
   UNUSED(argc);UNUSED(argv);
@@ -96,6 +110,9 @@ int main(int argc, char ** argv){
   }
   
   printf("tests passed!\n");
+  printf("Testing stack mode:\n");
+  test_stack_mode();
+  printf("End of test 2\n");
   return 0;
   
 }

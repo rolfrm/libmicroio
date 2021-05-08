@@ -2,6 +2,13 @@
 // #include <stdint.h>
 // 
 // binary reader / writer
+
+typedef enum {
+		  IO_MODE_NONE = 0,
+		  IO_MODE_STACK = 1,
+		  
+
+}io_mode;
 typedef struct{
   void * data;
   union{
@@ -10,10 +17,12 @@ typedef struct{
     void * user_data;
   };
   size_t size;
-
   // if its a read op, this reads
   // if its a write op, this writes
   void (* f)(void * data, size_t count, void * user_data);
+
+  // in stack mode, reads will decrease the offset and write will increase it.
+  io_mode mode;
 }binary_io;
 
 typedef binary_io io_base;
@@ -24,6 +33,10 @@ void io_advance(io_base * rd, size_t bytes);
 void io_rewind(io_base * rd, size_t bytes);
 void io_reset(io_base * io);
 uint8_t io_read_u8(io_reader * rd);
+
+binary_io io_stack_from_bytes(uint8_t * data, size_t count);
+binary_io io_reader_from_bytes(uint8_t * data, size_t count);
+
 // [obsolete] use io_offset instead.
 size_t io_getloc(binary_io * io);
 size_t io_offset(io_base * io);

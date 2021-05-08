@@ -6,7 +6,7 @@ LIB_SOURCES = $(addprefix test/, $(LIB_SOURCES1))
 CC = gcc
 TARGET = run-test
 LIB_OBJECTS =$(LIB_SOURCES:.c=.o)
-LIBS=-lmicroio
+LIBS= ./libmicroio.a
 LDFLAGS= -L. $(OPT) -Wall -Wextra $(LIBS)
 
 ALL= $(TARGET)
@@ -17,13 +17,19 @@ ifneq ($(BUILD),release)
     OPT = -g3 -O0
 endif
 
-$(TARGET): $(LIB_OBJECTS)
-	$(CC) $(LDFLAGS) $(LIB_OBJECTS) $(LIBS) -o $@
+all: $(ALL)
+
+libmicroio.a:
+	make
+
+
+$(TARGET): $(LIB_OBJECTS) libmicroio.a
+	$(CC)  $(LIB_OBJECTS) $(LDFLAGS) -o $@
 
 release debug:
 	$(MAKE) BUILD=$@
 
-all: $(ALL)
+
 
 .c.o: $(HEADERS) $(LEVEL_CS)
 	$(CC) $(CFLAGS) $< -o $@ -MMD -MF $@.depends
@@ -34,5 +40,5 @@ clean:
 
 -include $(LIB_OBJECTS:.o=.o.depends)
 
-
+.PHONY: libmicroio.a $(TARGET) 
 
