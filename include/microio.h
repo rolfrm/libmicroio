@@ -66,6 +66,10 @@ char * io_read_str0(binary_io * io);
 // reads a unsigned LEB128 number and reads the following number of bytes.
 char * io_read_strn(binary_io * io, uint32_t * out_len);
 
+// reads a utf8 codepoint.
+int32_t io_read_utf8_codepoint(io_reader * rd);
+
+
 // write
 void io_write(io_writer * writer, const void * data, size_t count);
 void io_write_u64_leb(io_writer * wd, uint64_t value);

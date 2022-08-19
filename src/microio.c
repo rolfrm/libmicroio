@@ -333,7 +333,7 @@ binary_io io_stack_from_bytes(u8 * data, size_t count){
 
 binary_io io_reader_from_bytes(u8 * data, size_t count){
   binary_io io = {0};
-  io.mode = IO_MODE_STACK;
+  io.mode = IO_MODE_NONE;
   io.data = data;
   io.size = count;
   return io;
